@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crismade - Lumânări de Botez Artizanale</title>
+    <!-- Includem Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Includem fonturi elegante de la Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Iconite Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        // Configurarea culorilor personalizate pentru Tailwind
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-background': '#FDF8F5', // Un roz pal, foarte deschis
+                        'brand-text': '#5C3D2E', // O nuanta de maro-cafea
+                        'brand-primary': '#E0AFA0', // Roz prafuit
+                        'brand-accent': '#B88B4A', // Auriu/bronz
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Stiluri personalizate pentru o nota de eleganta */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FDF8F5;
+            color: #5C3D2E;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+        .hero-bg {
+             background-image: url('https://placehold.co/1920x1080/FDF8F5/B88B4A?text=Crismade');
+             background-size: cover;
+             background-position: center;
+        }
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.08);
+        }
+    </style>
+</head>
+<body class="bg-brand-background text-brand-text">
+
+    <!-- Antet cu navigatie -->
+    <header class="bg-white/70 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h2 class="text-3xl tracking-widest text-brand-text">CRISMADE</h2>
+            <nav>
+                <a href="#produse" class="text-brand-text hover:text-brand-accent transition-colors">Produse</a>
+                <a href="#contact" class="ml-8 text-brand-text hover:text-brand-accent transition-colors">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sectiune Eroina -->
+    <section class="hero-bg">
+        <div class="bg-black/20 py-40">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-wide text-white">Eleganță în Fiecare Detaliu</h1>
+                <p class="mt-6 text-xl max-w-2xl mx-auto text-white/90">Creații artizanale pentru momente de neuitat.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sectiunea principala cu galeria de produse -->
+    <main id="produse" class="container mx-auto px-6 py-24">
+        <h2 class="text-5xl font-bold text-center mb-16">Colecția Noastră</h2>
+        <!-- Grid-ul va afisa 2 produse pe rand pe ecrane medii si mari -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+
+            <!-- Produs 1 -->
+            <div class="bg-white rounded-lg overflow-hidden product-card">
+                <img src="https://placehold.co/800x1000/fde6e6/a3a3a3?text=Model+Romantic" alt="Lumânare de botez model Romantic" class="w-full h-auto object-cover">
+                <div class="p-8 text-center">
+                    <h3 class="text-3xl text-brand-text">Model "Romantic"</h3>
+                    <p class="mt-3 text-brand-text/70 h-16">Decorat manual cu trandafiri de criogenare și dantelă fină de bumbac.</p>
+                    <p class="mt-4 text-3xl font-bold text-brand-accent">280 RON</p>
+                    <a href="mailto:comenzi@crismade.store?subject=Comanda Lumanare Botez - Model Romantic" class="mt-6 inline-block bg-brand-primary text-white font-semibold py-3 px-10 rounded-full shadow-lg hover:bg-opacity-90 transition-all">
+                        Comandă Acum
+                    </a>
+                </div>
+            </div>
+
+            <!-- Produs 2 - CU REDUCERE -->
+            <div class="bg-white rounded-lg overflow-hidden product-card border-2 border-brand-accent">
+                <div class="bg-brand-accent text-white text-center py-2 font-semibold tracking-wider">PROMOȚIE</div>
+                <img src="https://placehold.co/800x1000/e0f2fe/a3a3a3?text=Ingerasul+Albastru" alt="Lumânare de botez Ingerasul Albastru" class="w-full h-auto object-cover">
+                <div class="p-8 text-center">
+                    <h3 class="text-3xl text-brand-text">Model "Îngerașul Albastru"</h3>
+                    <p class="mt-3 text-brand-text/70 h-16">O creație delicată cu un pandantiv îngeraș și flori de hortensie albastră.</p>
+                    <div class="mt-4 text-3xl font-bold flex justify-center items-baseline gap-3">
+                        <span class="text-gray-400 line-through text-2xl">250 RON</span>
+                        <span class="text-red-600">220 RON</span>
+                    </div>
+                    <a href="mailto:comenzi@crismade.store?subject=Comanda Lumanare Botez - Model Ingerasul Albastru" class="mt-6 inline-block bg-brand-primary text-white font-semibold py-3 px-10 rounded-full shadow-lg hover:bg-opacity-90 transition-all">
+                        Comandă Acum
+                    </a>
+                </div>
+            </div>
+
+            <!-- Produs 3 -->
+            <div class="bg-white rounded-lg overflow-hidden product-card">
+                <img src="https://placehold.co/800x1000/d1fae5/a3a3a3?text=Natura+Vie" alt="Lumânare de botez Natura Vie" class="w-full h-auto object-cover">
+                <div class="p-8 text-center">
+                    <h3 class="text-3xl text-brand-text">Model "Natura Vie"</h3>
+                    <p class="mt-3 text-brand-text/70 h-16">Decor rustic-chic cu spice de grâu, lavandă și sfoară de iută.</p>
+                    <p class="mt-4 text-3xl font-bold text-brand-accent">230 RON</p>
+                     <a href="mailto:comenzi@crismade.store?subject=Comanda Lumanare Botez - Model Natura Vie" class="mt-6 inline-block bg-brand-primary text-white font-semibold py-3 px-10 rounded-full shadow-lg hover:bg-opacity-90 transition-all">
+                        Comandă Acum
+                    </a>
+                </div>
+            </div>
+
+            <!-- Produs 4 -->
+            <div class="bg-white rounded-lg overflow-hidden product-card">
+                <img src="https://placehold.co/800x1000/fef3c7/a3a3a3?text=Raza+de+Soare" alt="Lumânare de botez Raza de Soare" class="w-full h-auto object-cover">
+                <div class="p-8 text-center">
+                    <h3 class="text-3xl text-brand-text">Model "Raza de Soare"</h3>
+                    <p class="mt-3 text-brand-text/70 h-16">O explozie de bucurie cu floarea-soarelui și finisaje aurii delicate.</p>
+                    <p class="mt-4 text-3xl font-bold text-brand-accent">265 RON</p>
+                     <a href="mailto:comenzi@crismade.store?subject=Comanda Lumanare Botez - Model Raza de Soare" class="mt-6 inline-block bg-brand-primary text-white font-semibold py-3 px-10 rounded-full shadow-lg hover:bg-opacity-90 transition-all">
+                        Comandă Acum
+                    </a>
+                </div>
+            </div>
+
+            <!-- Produs 5 -->
+            <div class="bg-white rounded-lg overflow-hidden product-card">
+                <img src="https://placehold.co/800x1000/e9d5ff/a3a3a3?text=Vis+de+Lavanda" alt="Lumânare de botez Vis de Lavanda" class="w-full h-auto object-cover">
+                <div class="p-8 text-center">
+                    <h3 class="text-3xl text-brand-text">Model "Vis de Lavandă"</h3>
+                    <p class="mt-3 text-brand-text/70 h-16">Un aranjament elegant cu buchețele de lavandă și panglici de catifea.</p>
+                    <p class="mt-4 text-3xl font-bold text-brand-accent">240 RON</p>
+                     <a href="mailto:comenzi@crismade.store?subject=Comanda Lumanare Botez - Model Vis de Lavanda" class="mt-6 inline-block bg-brand-primary text-white font-semibold py-3 px-10 rounded-full shadow-lg hover:bg-opacity-90 transition-all">
+                        Comandă Acum
+                    </a>
+                </div>
+            </div>
+             
+             <!-- Aici vei adăuga produsele noi generate de tool -->
+        </div>
+    </main>
+    
+    <!-- Sectiune Contact -->
+    <footer id="contact" class="bg-white mt-12 border-t border-gray-200">
+        <div class="container mx-auto px-6 py-12 text-center">
+             <h3 class="text-4xl text-brand-text mb-4">Contactează-ne</h3>
+             <p class="max-w-xl mx-auto text-brand-text/80">Pentru comenzi personalizate sau orice întrebări, nu ezita să ne scrii. Îți vom răspunde în cel mai scurt timp posibil.</p>
+             <a href="mailto:comenzi@crismade.store" class="text-lg text-brand-accent hover:underline mt-4 inline-block">
+                <i class="fas fa-envelope mr-2"></i>comenzi@crismade.store
+             </a>
+            <p class="text-sm mt-8 text-brand-text/60">&copy; 2025 Crismade. Toate drepturile rezervate.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
