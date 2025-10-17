@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panou de Administrare - Crismade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background-color: #f8fafc; }
+        .product-form {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 text-slate-800">
+    <div class="max-w-5xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-slate-900">Panou de Administrare Crismade</h1>
+            <p class="text-slate-500 mt-2">Gestionează produsele de pe site-ul tău.</p>
+        </header>
+
+        <!-- Pasul 1: Incarcarea fisierului -->
+        <div id="upload-section" class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+            <h2 class="text-2xl font-semibold mb-3 flex items-center"><span class="bg-indigo-600 text-white rounded-full h-8 w-8 text-sm inline-flex items-center justify-center mr-3">1</span>Încarcă fișierul `index.html`</h2>
+            <p class="text-slate-600 mb-4">Pentru a începe, selectează fișierul `index.html` de pe calculatorul tău.</p>
+            <input type="file" id="file-input" accept=".html" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"/>
+        </div>
+
+        <!-- Container principal pentru administrare -->
+        <main id="management-section" class="hidden mt-8">
+
+            <!-- Pasul 2: Gestionarea produselor existente -->
+            <div id="existing-products-section" class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                <h2 class="text-2xl font-semibold mb-5 flex items-center"><span class="bg-indigo-600 text-white rounded-full h-8 w-8 text-sm inline-flex items-center justify-center mr-3">2</span>Gestionează Produsele Existente</h2>
+                <div id="products-list" class="space-y-6">
+                    <!-- Produsele vor fi incarcate aici de JavaScript -->
+                </div>
+            </div>
+
+            <!-- Pasul 3: Adaugarea unui produs nou -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-8">
+                 <h2 class="text-2xl font-semibold mb-5 flex items-center"><span class="bg-indigo-600 text-white rounded-full h-8 w-8 text-sm inline-flex items-center justify-center mr-3">3</span>Adaugă un Produs Nou</h2>
+                 <div id="add-product-form-container">
+                    <!-- Formularul de adaugare va fi aici -->
+                 </div>
+            </div>
+
+            <!-- Pasul 4: Generarea fisierului final -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200 mt-8">
+                <h2 class="text-2xl font-semibold mb-3 flex items-center"><span class="bg-indigo-600 text-white rounded-full h-8 w-8 text-sm inline-flex items-center justify-center mr-3">4</span>Salvează Modificările</h2>
+                <p class="text-slate-600 mb-4">După ce ai terminat de editat, generează noul fișier `index.html` și salvează-l pe calculatorul tău, suprascriind versiunea veche.</p>
+                <button id="generate-file-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 transition-all flex items-center justify-center text-lg">
+                    <i class="fas fa-download mr-3"></i>
+                    Generează și Descarcă `index.html`
+                </button>
+            </div>
+        </main>
+    </div>
+
+<script>
+let originalHtmlContent = '';
+let products = [];
+const fileInput = document.getElementById('file-input');
+const managementSection = document.getElementById('management-section');
+const productsList = document.getElementById('products-list');
+const addProductFormContainer = document.getElementById('add-product-form-container');
+const generateBtn = document.getElementById('generate-file-btn');
+
+fileInput.addEventListener('change', handleFileSelect);
+generateBtn.addEventListener('click', generateNewIndexFile);
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        originalHtmlContent = e.target.result;
+        parseAndDisplayProducts(originalHtmlContent);
+        managementSection.classList.remove('hidden');
+    };
+    reader.readAsText(file);
+}
+
+function parseAndDisplayProducts(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const productsSection = doc.querySelector('div.grid');
+    products = [];
+
+    const productElements = productsSection.querySelectorAll('.product-card');
+    productElements.forEach((card, index) => {
+        const name = card.querySelector('h3')?.textContent.trim() || '';
+        const description = card.querySelector('p.mt-3')?.textContent.trim() || '';
+        const image = card.querySelector('img')?.src || '';
+
+        let price = '';
+        let promoPrice = '';
+        const priceElement = card.querySelector('.line-through');
+        if (priceElement) { // Este promotie
+            price = priceElement.textContent.replace('RON', '').trim();
+            promoPrice = priceElement.nextElementSibling?.textContent.replace('RON', '').trim() || '';
+        } else {
+            price = card.querySelector('p.mt-4, div.mt-4')?.textContent.replace('RON', '').trim() || '';
+        }
+
+        products.push({ id: index, name, description, image, price, promoPrice });
+    });
+
+    renderProducts();
+}
+
+function renderProducts() {
+    productsList.innerHTML = '';
+    if (products.length === 0) {
+        productsList.innerHTML = `<p class="text-slate-500 text-center py-4">Nu a fost găsit niciun produs în fișierul încărcat.</p>`;
+    }
+    products.forEach(product => {
+        const formHtml = createProductForm(product, false);
+        productsList.insertAdjacentHTML('beforeend', formHtml);
+    });
+    renderAddProductForm();
+    attachEventListeners();
+}
+
+function renderAddProductForm() {
+    addProductFormContainer.innerHTML = createProductForm({ id: 'new' }, true);
+    document.getElementById('form-new').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newProduct = getProductDataFromForm('new');
+        newProduct.id = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 0;
+        products.push(newProduct);
+        renderProducts(); // Re-render all to show the new product and reset the form
+    });
+}
+
+function createProductForm(product, isNewForm) {
+    const { id, name = '', description = '', image = '', price = '', promoPrice = '' } = product;
+    const isPromo = promoPrice !== '';
+
+    return `
+    <form id="form-${id}" data-id="${id}" class="product-form bg-slate-50 p-5 rounded-lg border relative">
+        ${!isNewForm ? `<h3 class="text-lg font-semibold text-slate-800 mb-4">${name}</h3>` : ''}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="name-${id}" class="block text-sm font-medium text-slate-700">Nume Produs</label>
+                <input type="text" id="name-${id}" value="${name}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm sm:text-sm">
+            </div>
+            <div>
+                <label for="image-${id}" class="block text-sm font-medium text-slate-700">URL Imagine</label>
+                <input type="text" id="image-${id}" value="${image}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm sm:text-sm">
+            </div>
+            <div class="md:col-span-2">
+                <label for="description-${id}" class="block text-sm font-medium text-slate-700">Descriere</label>
+                <textarea id="description-${id}" rows="2" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm sm:text-sm">${description}</textarea>
+            </div>
+            <div>
+                <label for="price-${id}" class="block text-sm font-medium text-slate-700">Preț Normal (RON)</label>
+                <input type="number" id="price-${id}" value="${price}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm sm:text-sm">
+            </div>
+            <div class="flex items-end">
+                 <div class="flex items-center h-full">
+                    <input id="isPromo-${id}" type="checkbox" ${isPromo ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <label for="isPromo-${id}" class="ml-2 block text-sm text-slate-900">Este în promoție?</label>
+                </div>
+            </div>
+             <div id="promoPriceContainer-${id}" class="${isPromo ? '' : 'hidden'}">
+                <label for="promoPrice-${id}" class="block text-sm font-medium text-slate-700">Preț Promoțional (RON)</label>
+                <input type="number" id="promoPrice-${id}" value="${promoPrice}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm sm:text-sm">
+            </div>
+        </div>
+        <div class="flex items-center ${isNewForm ? 'mt-6' : 'mt-4 pt-4 border-t border-slate-200'}">
+            ${isNewForm
+                ? `<button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-5 rounded-md hover:bg-indigo-700 transition-all w-full"><i class="fas fa-plus mr-2"></i>Adaugă Produsul</button>`
+                : `<button type="submit" class="bg-green-600 text-white font-semibold py-2 px-5 rounded-md hover:bg-green-700 transition-all"><i class="fas fa-save mr-2"></i>Salvează Modificările</button>
+                   <button type="button" class="delete-btn ml-auto bg-red-600 text-white font-semibold py-2 px-5 rounded-md hover:bg-red-700 transition-all"><i class="fas fa-trash mr-2"></i>Șterge</button>`
+            }
+        </div>
+    </form>
+    `;
+}
+
+function attachEventListeners() {
+    document.querySelectorAll('.product-form').forEach(form => {
+        const id = form.dataset.id;
+        if (id === 'new') return; // Skip the 'add new' form
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const updatedProduct = getProductDataFromForm(id);
+            const index = products.findIndex(p => p.id == id);
+            products[index] = { ...products[index], ...updatedProduct };
+            alert(`Produsul "${updatedProduct.name}" a fost salvat!`);
+            // Optional: re-render for visual feedback
+            const formTitle = form.querySelector('h3');
+            if(formTitle) formTitle.textContent = updatedProduct.name;
+        });
+
+        const isPromoCheckbox = form.querySelector(`#isPromo-${id}`);
+        const promoPriceContainer = form.querySelector(`#promoPriceContainer-${id}`);
+        if(isPromoCheckbox) {
+            isPromoCheckbox.addEventListener('change', () => {
+                promoPriceContainer.classList.toggle('hidden', !isPromoCheckbox.checked);
+            });
+        }
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const form = e.target.closest('form');
+            const id = form.dataset.id;
+            const product = products.find(p => p.id == id);
+            if (confirm(`Ești sigur că vrei să ștergi produsul "${product.name}"?`)) {
+                products = products.filter(p => p.id != id);
+                renderProducts();
+            }
+        });
+    });
+}
+
+function getProductDataFromForm(id) {
+    const name = document.getElementById(`name-${id}`).value;
+    const image = document.getElementById(`image-${id}`).value;
+    const description = document.getElementById(`description-${id}`).value;
+    const price = document.getElementById(`price-${id}`).value;
+    const isPromo = document.getElementById(`isPromo-${id}`).checked;
+    const promoPrice = isPromo ? document.getElementById(`promoPrice-${id}`).value : '';
+    return { name, image, description, price, promoPrice };
+}
+
+function generateNewIndexFile() {
+    // 1. Generate the HTML for the products list
+    let productsHtml = products.map(p => {
+        const priceHtml = p.promoPrice
+            ? `<div class="mt-4 text-3xl font-bold flex justify-center items-baseline gap-3">
+                        <span class="text-gray-400 line-through text-2xl">${p.price} RON</span>
+                        <span class="text-red-600">${p.promoPrice} RON</span>
+                    </div>`
+            : `<p class="mt-4 text-3xl font-bold text-brand-accent">${p.price} RON</p>`;
+
+        const promoBanner = p.promoPrice ? `<div class="bg-brand-accent text-white text-center py-2 font-semibold tracking-wider">PROMOȚIE</div>` : '';
+        const cardBorder = p.promoPrice ? 'border-2 border-brand-accent' : '';
+
+        // Note the updated <a> tag for ordering
+        return `            <!-- Produs ${p.name} -->
+            <div class="bg-white rounded-lg overflow-hidden product-card ${cardBorder}">
+                ${promoBanner}
+                <img src="${p.image}" alt="Lumânare de botez ${p.name}" class="w-full h-auto object-cover">
+                <div class="p-8 text-center">
+                    <h3 class="text-3xl text-brand-text">${p.name}</h3>
+                    <p class="mt-3 text-brand-text/70 h-16">${p.description}</p>
+                    ${priceHtml}
+                    <a href="#" data-product="${p.name}" class="product-order-link mt-6 inline-block bg-brand-primary text-white font-semibold py-3 px-10 rounded-full shadow-lg hover:bg-opacity-90 transition-all">
+                        Comandă Acum
+                    </a>
+                </div>
+            </div>`;
+    }).join('\\n');
+
+    // 2. Replace the products section in the original HTML
+    const productsRegex = /<!-- SCRIPT_GENERATED_PRODUCTS_SECTION -->(.|\n)*?<!-- \/SCRIPT_GENERATED_PRODUCTS_SECTION -->/s;
+    let finalHtml = originalHtmlContent.replace(productsRegex, `<!-- SCRIPT_GENERATED_PRODUCTS_SECTION -->\n${productsHtml}\n            <!-- /SCRIPT_GENERATED_PRODUCTS_SECTION -->`);
+
+    // 3. Replace the entire footer to ensure it has the correct structure for the script
+    const footerRegex = /<footer id="contact"(.|\n)*?<\/footer>/s;
+    const newFooter = `<footer id="contact" class="bg-white mt-12 border-t border-gray-200">
+        <div class="container mx-auto px-6 py-12 text-center">
+             <h3 class="text-4xl text-brand-text mb-4">Contactează-ne</h3>
+             <p class="max-w-xl mx-auto text-brand-text/80">Pentru comenzi personalizate sau orice întrebări, nu ezita să ne scrii.</p>
+             <a id="contact-email-link" href="#" class="text-lg text-brand-accent hover:underline mt-4 inline-block">
+                <i class="fas fa-envelope mr-2"></i><span></span>
+             </a>
+            <p class="text-sm mt-8 text-brand-text/60">&copy; 2025 Crismade. Toate drepturile rezervate.</p>
+        </div>
+    </footer>`;
+    finalHtml = finalHtml.replace(footerRegex, newFooter);
+
+    // 4. Find and remove any existing script tag at the end of the body
+    const bodyEndRegex = /<script>(.|\n)*?<\/script>\s*<\/body>/s;
+
+    // 5. Add the new, correct script before the closing </body> tag
+    const newScript = `
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const encodedEmail = 'Y29tZW56aS5jcmlzbWFkZS5zdG9yZUBnbWFpbC5jb20=';
+            const decodedEmail = atob(encodedEmail);
+
+            // Update product order links
+            const orderLinks = document.querySelectorAll('.product-order-link');
+            orderLinks.forEach(link => {
+                const productName = link.getAttribute('data-product');
+                const subject = \`Comanda Lumanare Botez - \${productName}\`;
+                link.href = \`mailto:\${decodedEmail}?subject=\${encodeURIComponent(subject)}\`;
+            });
+
+            // Update contact email link
+            const contactLink = document.getElementById('contact-email-link');
+            if (contactLink) {
+                contactLink.href = \`mailto:\${decodedEmail}\`;
+                contactLink.querySelector('span').textContent = decodedEmail;
+            }
+        });
+    <\/script>
+</body>`;
+
+    if (bodyEndRegex.test(finalHtml)) {
+        finalHtml = finalHtml.replace(bodyEndRegex, newScript);
+    } else {
+        // If no script was found, just replace the body tag
+        finalHtml = finalHtml.replace('</body>', newScript);
+    }
+
+    // 6. Create and trigger the download
+    const blob = new Blob([finalHtml], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'index.html';
+    document.body.appendChild(a); // Required for Firefox
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+}
+
+</script>
+</body>
+</html>
